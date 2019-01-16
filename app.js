@@ -5,10 +5,10 @@ const cheerio = require('cheerio');
 const DbManager = require('./mongo-client');
 
 const Header = {
-  Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
-  'Accept-Encoding': 'gzip, deflate',
+  'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
+  'Accept-Encoding': 'gzip',
   'Accept-Language': 'zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7,zh-TW;q=0.6',
-  UserAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36'
+  'UserAgent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36'
 }
 const cities = {
   country: 'CN',
@@ -63,14 +63,15 @@ async function extractCities(cities) {
     // 遍历省的城市
     trs.each((i, tr) => {
       let a_node = $(tr).find('a').get(1);
-      _cities.push($(a_node).text());
+      let city = $(a_node).text();
+      if (city !== '省直辖县级行政区划') _cities.push(city);
     });
     rows[i].cities = _cities;
   }
 }
 
 async function main() {
-  const MONGO_URL = 'mongodb://localhost:27017';
+  const MONGO_URL = 'mongodb://106.13.70.140:27017';
   const MONGO_DB = 'sights';
 
   await extractArea(cities).catch(err => {
